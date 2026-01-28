@@ -1,4 +1,4 @@
-name: terrdorm workflow
+name: terraform workflow
 
 on:
     pull_request:
@@ -16,11 +16,22 @@ jobs:
         # closed event triggered by merged PRs only
         if: github.event.pull_request.merged == true
         runs-on: ubuntu-latest
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v5
               with:
                   ref: ${{ github.ref_name }}
+
+            - uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "1.14.3"
+
+            - name: Terraform Init
+              run: terraform init
+
+            - name: Terraform Apply
+              run: terraform apply -auto-approve
 # name: "Vprofile IAC"
 # on:
 #   push:
