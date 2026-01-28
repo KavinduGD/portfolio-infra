@@ -16,7 +16,7 @@ module "vpc" {
   public_subnet_tags = {
     # This subnet is allowed to host PUBLIC load balancers
     "kubernetes.io/role/elb" = "1"
-     # This subnet belongs to this EKS cluster , can be shared to another clusters
+    # This subnet belongs to this EKS cluster , can be shared to another clusters
     "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
   }
 
@@ -28,9 +28,9 @@ module "vpc" {
   }
 
   tags = {
-    
-    project_name                                    = var.project_name
-    environment                                     = var.environment
+
+    project_name = var.project_name
+    environment  = var.environment
   }
 }
 
