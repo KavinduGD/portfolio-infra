@@ -1,54 +1,60 @@
 name: terraform workflow
 
+# It makes sure only ONE workflow run in the same group runs at a time.
+
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
-    pull_request:
-        branches:
-            - stage
-            - main
-        types:
-            - closed
+  pull_request:
+    branches:
+      - stage
+      - main
+    types:
+      - closed
 env:
-    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
-    create_infrastructure:
-        # closed event triggered by merged PRs only
-        if: github.event.pull_request.merged == true
-        runs-on: ubuntu-latest
+  create_infrastructure:
+    # closed event triggered by merged PRs only
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v5
-              with:
-                  ref: ${{ github.ref_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
 
-            - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v5.1.1
-              with:
-                  aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ap-south-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
 
-            - uses: hashicorp/setup-terraform@v3
-              with:
-                  terraform_version: "1.14.3"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.3"
 
-            - name: Terraform Init
-              run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
-            #   if validate fails, the subsequent steps will be skipped
-            - name: Terraform validate
-              run: terraform validate
+      #   if validate fails, the subsequent steps will be skipped
+      - name: Terraform validate
+        run: terraform validate
 
-            #  if plan fails, the subsequent steps will be skipped
-            - name: Terraform plan
-              run: terraform plan
+      #  if plan fails, the subsequent steps will be skipped
+      - name: Terraform plan
+        run: terraform plan
 
-            # if apply fails, the job will be marked as failed
+      # if apply fails, the job will be marked as failed
 
-            - name: Terraform Apply
-              run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
 #       - name: Get Kube config file
 #         id: getconfig
 #         if: steps.apple.outcome == 'success'
