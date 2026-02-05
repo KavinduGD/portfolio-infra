@@ -56,4 +56,6 @@ resource "helm_release" "aws_lbc" {
       }
     })
   ]
+
+  depends_on = [module.eks]
 }

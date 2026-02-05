@@ -15,4 +15,6 @@ resource "helm_release" "argocd" {
   #     }
   #   })
   # ]
+
+  depends_on = [helm_release.aws_lbc]
 }
