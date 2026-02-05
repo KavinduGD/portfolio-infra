@@ -4,15 +4,15 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
-  version          = "5.46.7"
+  version          = "9.0.0"
 
-  values = [
-    yamlencode({
-      server = {
-        service = {
-          type = "LoadBalancer"
-        }
-      }
-    })
-  ]
+  # values = [
+  #   yamlencode({
+  #     server = {
+  #       service = {
+  #         type = "LoadBalancer"
+  #       }
+  #     }
+  #   })
+  # ]
 }
