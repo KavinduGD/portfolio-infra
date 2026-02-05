@@ -13,6 +13,7 @@ module "eks" {
     kube-proxy = {}
     vpc-cni = {
       before_compute = true
+      addon_version  = "v1.21.1-eksbuild.1"
     }
   }
 
@@ -34,13 +35,16 @@ module "eks" {
 
     worker-nodes = {
 
-
       ami_type = "AL2023_x86_64_STANDARD"
 
       instance_types = ["t3.medium"]
 
-      min_size     = 0
-      desired_size = 0
+      use_latest_ami_release_version = false
+      # ami_release_version = "1.33.5-20260120"
+
+
+      min_size     = 1
+      desired_size = 1
       max_size     = 3
     }
   }
