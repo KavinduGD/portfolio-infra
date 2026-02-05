@@ -7,18 +7,15 @@ terraform {
       source  = "hashicorp/aws"
       version = "6.28.0"
     }
-    # random = {
-    #   source  = "hashicorp/random"
-    #   version = "3.8.1"
-    # }
+ 
     # helm = {
     #   source  = "hashicorp/helm"
     #   version = "~> 2.12"
     # }
-    # kubernetes = {
-    #   source  = "hashicorp/kubernetes"
-    #   version = "~> 2.26"
-    # }
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+      version = "3.0.1"
+    }
   }
 
 
@@ -35,17 +32,24 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# provider "kubernetes" {
-#   host                   = module.eks.cluster_endpoint
-#   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
 
-#   exec {
-#     api_version = "client.authentication.k8s.io/v1beta1"
-#     command     = "aws"
-#     # This requires the awscli to be installed locally where Terraform is executed
-#     args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
-#   }
-# }
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+  }
+}
+
+resource "kubernetes_namespace" "example" {
+  metadata {
+    name = "my-first-namespace"
+  }
+}
 
 # provider "helm" {
 #   kubernetes {
