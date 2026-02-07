@@ -5,21 +5,30 @@ module "eks" {
   name               = var.eks_cluster_name
   kubernetes_version = var.kubernetes_version
 
+  # IAM Roles for Service Accounts
+  # Kubernetes pods use AWS permissions securely, without putting AWS access keys inside containers.
+  # default is also true
+  enable_irsa = true
+
+
+
   addons = {
     coredns = {}
-    eks-pod-identity-agent = {
-      before_compute = true
-    }
+    # eks-pod-identity-agent = {
+    #   before_compute = true
+    # }
     kube-proxy = {}
     vpc-cni = {
       before_compute = true
       addon_version  = "v1.21.1-eksbuild.1"
     }
     aws-ebs-csi-driver = {
-      addon_version = "v1.55.0-eksbuild.2"
+      addon_version               = "v1.55.0-eksbuild.2"
+      service_account_role_arn    = module.ebs_csi_irsa_role.iam_role_arn
     }
     aws-efs-csi-driver = {
-      addon_version = "v2.3.0-eksbuild.1"
+      addon_version            = "v2.3.0-eksbuild.1"
+      service_account_role_arn = module.efs_csi_irsa_role.iam_role_arn
     }
   }
 
@@ -49,8 +58,8 @@ module "eks" {
       # ami_release_version = "1.33.5-20260120"
 
 
-      min_size     = 1
-      desired_size = 1
+      min_size     = 2
+      desired_size = 2
       max_size     = 3
     }
   }
@@ -58,5 +67,35 @@ module "eks" {
   tags = {
     project_name = var.project_name
     environment  = var.environment
+  }
+}
+
+module "ebs_csi_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.28.0"
+
+  role_name             = "${var.eks_cluster_name}-ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+module "efs_csi_irsa_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.28.0"
+
+  role_name             = "${var.eks_cluster_name}-efs-csi"
+  attach_efs_csi_policy = true
+
+  oidc_providers = {
+    ex = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:efs-csi-controller-sa"]
+    }
   }
 }
