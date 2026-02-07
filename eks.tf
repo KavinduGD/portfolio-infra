@@ -15,6 +15,12 @@ module "eks" {
       before_compute = true
       addon_version  = "v1.21.1-eksbuild.1"
     }
+    aws-ebs-csi-driver = {
+      addon_version = "v1.55.0-eksbuild.2"
+    }
+    aws-efs-csi-driver = {
+      addon_version = "v2.3.0-eksbuild.1"
+    }
   }
 
   # optional
