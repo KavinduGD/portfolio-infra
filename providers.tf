@@ -23,9 +23,10 @@ terraform {
       version = "3.4.1"
     }
   }
-
+#  portfolio-tf-state-tkg
   backend "s3" {
-    bucket       = "kts-tf-state-tkg"
+    # bucket       = "kts-tf-state-tkg"
+    bucket       = "portfolio-tf-state-tkg"
     key          = "terraform.tfstate"
     region       = "ap-south-1"
     use_lockfile = true

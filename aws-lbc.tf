@@ -33,7 +33,6 @@ module "lb_role" {
   }
 }
 
-data "aws_region" "current" {}
 
 resource "helm_release" "aws_lbc" {
   name       = "aws-load-balancer-controller"
