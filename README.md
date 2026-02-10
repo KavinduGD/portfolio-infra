@@ -7,6 +7,7 @@ This repository contains the Infrastructure as Code (IaC) configuration for depl
 This project sets up a robust, scalable, and manageable Kubernetes environment on AWS. It leverages modern DevOps tools to ensure automated deployments and infrastructure management.
 
 **Key Technologies:**
+
 - **Terraform**: Infrastructure provisioning (VPC, EKS, IAM, etc.)
 - **AWS EKS**: Managed Kubernetes cluster.
 - **ArgoCD**: GitOps continuous delivery tool for Kubernetes.
@@ -18,14 +19,16 @@ This project sets up a robust, scalable, and manageable Kubernetes environment o
 The infrastructure is designed for high availability and security within the `ap-south-1` region.
 
 ### Infrastructure Diagram
+
 This diagram illustrates the AWS resources provisioning, including the VPC, EKS Control Plane, Worker Nodes, and integration with Route 53 and Load Balancers.
 
-![Infrastructure Architecture](assets/architecture.png)
+<img src="assets/architecture.png" alt="Infrastructure Architecture"  width="800px"/>
 
 ### Resource & Deployment Map
+
 This diagram shows the Kubernetes resources, including Deployments, Services, Ingress, and the ArgoCD integration.
 
-![Kubernetes Resources](assets/resources.png)
+<img src="assets/resources.png" alt="Kubernetes Resources"  width="1200px"/>
 
 ## 🛠️ Prerequisites
 
@@ -55,13 +58,15 @@ Before you begin, ensure you have the following tools installed and configured:
 ## ⚙️ Configuration Details
 
 ### VPC
+
 - **CIDR**: `10.0.0.0/16`
 - **Subnets**: Public and Private subnets across 3 Availability Zones.
 - **NAT Gateway**: Single NAT Gateway for outbound connectivity from private subnets.
 
 ### EKS Cluster
-- **Version**: Kubernetes 1.29 (or latest supported by module).
-- **Node Groups**: `t3.large` instances with auto-scaling (Min: 2, Max: 3).
+
+- **Version**: Kubernetes 1.33
+- **Node Groups**: `t3.large` instances with auto-scaling
 - **Add-ons**:
   - `vpc-cni`
   - `coredns`
@@ -70,43 +75,55 @@ Before you begin, ensure you have the following tools installed and configured:
   - `aws-efs-csi-driver` (for EFS storage)
 
 ### GitOps & Ingress
+
 - **ArgoCD**: Installed via Helm chart (Version 9.0.0) in the `argocd` namespace.
 - **AWS Load Balancer Controller**: Manages ALBs for Ingress resources, enabling external access to services.
 
 ## 🚀 Setup & Deployment
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/KavinduGD/portfolio-infra.git
 cd portfolio-infra
 ```
 
 ### 2. Configure AWS Credentials
+
 Ensure your environment is configured with AWS credentials:
+
 ```bash
 aws configure
 ```
 
 ### 3. Initialize Terraform
+
 Initialize the Terraform working directory. This will download the necessary providers and modules.
+
 ```bash
 terraform init
 ```
 
 ### 4. Plan the Infrastructure
+
 Preview the changes that Terraform will make.
+
 ```bash
 terraform plan
 ```
 
 ### 5. Apply Configuration
+
 Apply the changes to provision the infrastructure.
+
 ```bash
 terraform apply --auto-approve
 ```
 
 ### 6. Configure Kubectl
+
 Update your kubeconfig to interact with the new cluster:
+
 ```bash
 aws eks update-kubeconfig --region ap-south-1 --name <your-cluster-name>
 ```
@@ -115,7 +132,7 @@ aws eks update-kubeconfig --region ap-south-1 --name <your-cluster-name>
 
 The project includes a GitHub Actions workflow (`.github/workflows/main.yaml`) that automates the Terraform deployment process.
 
-- **Trigger**: Pull requests to `main` or `stage` branches.
+- **Trigger**: Pull requests to `main` branche.
 - **Process**:
   1.  **Checkout Code**: Pulls the latest code.
   2.  **Configure AWS**: Sets up AWS credentials from GitHub Secrets.

@@ -9,7 +9,6 @@ concurrency:
 on:
   pull_request:
     branches:
-      - stage
       - main
     types:
       - closed
