@@ -26,7 +26,7 @@ terraform {
 #  portfolio-tf-state-tkg
   backend "s3" {
     # bucket       = "kts-tf-state-tkg"
-    bucket       = "portfolio-tf-state-tkg"
+    bucket       = "portfolio-tf-state-kavindu"
     key          = "terraform.tfstate"
     region       = "ap-south-1"
     use_lockfile = true
